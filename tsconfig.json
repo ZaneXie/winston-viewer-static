@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "allowJs": true,
+    "strictNullChecks": true,
+    "lib": [ "es2015.promise", "es5" , "dom"],
+    "experimentalDecorators":true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include":[
+    "index.ts",
+    "typings/**/*",
+    "src/**/*.ts",
+    "node_modules/vue-router/types/*",
+    "node_modules/@types/**/*",
+    "node_modules/vue-class-component/**/*"
+  ]
+}
