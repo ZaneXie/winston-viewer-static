@@ -3,17 +3,72 @@
  */
 
 import Vue = require("vue");
-var $ = require('jquery');
+// var $ = require('jquery');
 import {VueComponent} from "../../utils/decorators";
+let jsonFormatter = require('json-formatter-js');
+function encodeQueryData(data) {
+  let ret: string[] = [];
+  for (let d in data)
+    ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+  return ret.join('&');
+}
+
+Vue.directive('json', {
+  update(el, binding, vnode){
+    let k = new jsonFormatter(binding.value);
+    while (true) {
+      let child = el.firstChild;
+      if (child) {
+        el.removeChild(child);
+      } else {
+        break;
+      }
+    }
+    el.appendChild(k.render());
+  },
+  // update(el,binding,vnode){
+  //     console.log(el, binding);
+  // }
+})
 
 @VueComponent(require('./index.vue'), {
-  filters:{
-    toClass(page){
-      console.log(this);
-      if(page == this.currentPage){
-        return 'active'
-      }
-      return '';
+  asyncComputed: {
+    current() {
+      let option = {};
+      option['name'] = this.currentLogger;
+      option['start'] = this.currentPage * this.pageSize;
+      option['limit'] = this.pageSize;
+      option['order'] = 'asc';
+
+
+      return (<any>this).$http.get('query?' + encodeQueryData(option)).then((response) => {
+        let res = JSON.parse(response.body);
+        let data: any[] = [];
+        for (let name in res) {
+          let origin = res[name];
+          let transed: any[] = [];
+          for (let k of origin) {
+            let trans = {
+              timestamp: k.timestamp,
+              message: k.message,
+            };
+            delete k['timestamp']
+            delete k['message']
+
+            trans['meta'] = k;
+            trans['xxx'] = "<span>333</span>"
+            transed.push(trans);
+          }
+
+          data = data.concat(transed);
+        }
+        return data;
+      });
+    }
+  },
+  filters: {
+    cutMessage(message){
+      return message.slice(0, 50);
     }
   }
 })
@@ -36,19 +91,22 @@ export class Viewer extends Vue {
     ['a', 'b', 'c', 'd', 'e', 'f'],
   ];
   pageSize: number = 10;
-
-  get totalPage() {
-    return Math.ceil(this.all.length / this.pageSize);
-  }
-
-  get current() {
-    return this.all.slice(this.currentPage * this.pageSize, (this.currentPage + 1) * this.pageSize)
-  }
+  totalPage: number = 100;
 
   currentPage: number = 0;
+  loggers: string[] = [];
+  currentLogger: string = 'Select logger';
+  private http;
 
   mounted() {
+    this.http = (<any>this).$http;
+    this.http.get('loggers').then((response) => {
+      this.loggers = JSON.parse(response.body);
+    })
+  }
 
+  changeLogger(logger) {
+    this.currentLogger = logger;
   }
 
   gotoPage(page) {
@@ -57,7 +115,6 @@ export class Viewer extends Vue {
     }
     this.currentPage = page;
   }
-
 
   nextPage(count) {
     let nextPage = this.currentPage + count;
@@ -68,20 +125,5 @@ export class Viewer extends Vue {
   }
 
   created() {
-    // setInterval(()=>{
-    //   console.log(table);
-    // }, 2000)
-    let i = 0;
-    setInterval(() => {
-      this.all.push(
-        ['a' + i, 'b' + i, 'c' + i, 'd', 'e', 'f'],
-      )
-      i++;
-      // $(this.$refs['table']).DataTable();
-      // console.log(table.row.add);
-      // table.row.add(
-      //     ['a', 'b','c','d','e', 'f'],
-      // )
-    }, 1000)
   }
 }

@@ -8,6 +8,9 @@ import * as Vue from "vue";
 import Component from "vue-class-component/lib/index";
 import {VueClass} from "vue-class-component/lib/declarations";
 
+export interface ComponentOptions<U extends Vue> extends Vue.ComponentOptions<U>{
+    asyncComputed?:{};
+}
 /**
  * combine vue-loader with vue-class-component
  * @param obj vue-loader object, like require('./abc.vue')
@@ -15,7 +18,7 @@ import {VueClass} from "vue-class-component/lib/declarations";
  * @returns {(target:V)=>V}
  * @constructor
  */
-export function VueComponent<U extends Vue>(obj, option: Vue.ComponentOptions<U>): <V extends VueClass>(target: V) => V {
+export function VueComponent<U extends Vue>(obj, option: ComponentOptions<U>): <V extends VueClass>(target: V) => V {
   if (obj._scopeId) {
     let k = <any> option;
     k._scopeId = obj._scopeId;
