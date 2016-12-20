@@ -1,3 +1,5 @@
+// declare var __webpack_public_path__;
+// __webpack_public_path__= '/dist'
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue = require('vue')
