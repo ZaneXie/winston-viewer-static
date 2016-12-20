@@ -1,5 +1,17 @@
-// declare var __webpack_public_path__;
-// __webpack_public_path__= '/dist'
+export interface IConfig {
+  prefix?: string;
+}
+declare var __webpack_public_path__;
+
+let conf: IConfig = window['winston-viewer-config'];
+if (conf && conf.prefix) {
+  let prefix = conf.prefix;
+  if (prefix.charAt(prefix.length - 1) != "/") {
+    prefix = prefix + "/";
+  }
+  __webpack_public_path__ = conf.prefix;
+}
+
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue = require('vue')
@@ -24,14 +36,16 @@ Vue.use(AsyncComputed);
 class App extends Vue {
 
 }
-(<any>Vue).http.options.root = "/log";
-
-/* eslint-disable no-new */
-new (<any>Vue)({
+// window['vue-resource-callback'] = (http)=>{
+//   http.options.root = "/log";
+// }
+let config = {
   el: '#app',
   template: '<App/>',
   components: {App},
-  http: {
-    root: '/log'
-  }
-})
+}
+if (conf && conf.prefix) {
+  (<any>Vue).http.options.root = conf.prefix;
+}
+/* eslint-disable no-new */
+new Vue(config);
