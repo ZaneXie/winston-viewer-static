@@ -13,23 +13,18 @@ function encodeQueryData(data) {
   return ret.join('&');
 }
 
-Vue.directive('json', {
-  update(el, binding, vnode){
-    let k = new jsonFormatter(binding.value);
-    while (true) {
-      let child = el.firstChild;
-      if (child) {
-        el.removeChild(child);
-      } else {
-        break;
-      }
+Vue.directive('json', function (el, binding, vnode) {
+  let k = new jsonFormatter(binding.value);
+  while (true) {
+    let child = el.firstChild;
+    if (child) {
+      el.removeChild(child);
+    } else {
+      break;
     }
-    el.appendChild(k.render());
-  },
-  // update(el,binding,vnode){
-  //     console.log(el, binding);
-  // }
-})
+  }
+  el.appendChild(k.render());
+});
 
 @VueComponent(require('./index.vue'), {
   asyncComputed: {
@@ -49,8 +44,10 @@ Vue.directive('json', {
           let transed: any[] = [];
           for (let k of origin) {
             let trans = {
+              name:name,
               timestamp: k.timestamp,
               message: k.message,
+              level:k.level
             };
             delete k['timestamp']
             delete k['message']

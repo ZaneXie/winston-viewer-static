@@ -1,44 +1,53 @@
 <template>
   <div class="col-md-12 vue-table">
-    <div class="btn-group">
-      <button class="btn btn-default">
-        {{currentLogger}}
-      </button>
-      <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li v-for="logger in loggers">
-          <a href="#" v-on:click.prevent="changeLogger(logger)">{{logger}}</a>
-        </li>
-      </ul>
+    <div>
+      <div class="col-md-6">
+        <div class="btn-group">
+          <button class="btn btn-default">
+            {{currentLogger}}
+          </button>
+          <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li v-for="logger in loggers">
+              <a href="#" v-on:click.prevent="changeLogger(logger)">{{logger}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <select class="form-control" v-model="pageSize" >
+          <option v-for="i in 10">{{i}}</option>
+        </select>
+      </div>
     </div>
 
     <table id="example" class="table table-bordered table-striped table-hover" width="100%" cellspacing="0"
            ref="table">
       <thead>
       <tr>
+        <th>log-name</th>
         <th>timestamp</th>
+        <th>level</th>
         <th>message</th>
-        <th>Office</th>
-        <th>Age</th>
-        <th>Start date</th>
-        <th>Salary</th>
+        <th>meta</th>
       </tr>
       </thead>
       <tfoot>
       <tr>
-        <th>Name</th>
-        <th>Position</th>
-        <th>Office</th>
-        <th>Age</th>
-        <th>Start date</th>
-        <th>Salary</th>
+        <th>log-name</th>
+        <th>timestamp</th>
+        <th>level</th>
+        <th>message</th>
+        <th>meta</th>
       </tr>
       </tfoot>
       <tbody>
-      <tr v-for="item in current">
+      <tr v-for="item in current" :class="{danger:item.level==='error', warning:item.level==='warn'}">
+        <td>{{item.name}}</td>
         <td>{{item.timestamp}}</td>
+        <td>{{item.level}}</td>
         <td :title="item.message">{{item.message | cutMessage}}</td>
         <td v-json="item.meta"></td>
       </tr>
