@@ -1,6 +1,11 @@
 .idea
 .DS_Store
 node_modules/
+build/
+config/
+tsconfig.json
+index.dev.html
+index.html
 
 # Logs
 logs

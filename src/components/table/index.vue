@@ -2,6 +2,7 @@
   <div class="col-md-12 vue-table">
     <div>
       <div class="col-md-6">
+        <button class="btn btn-success" v-on:click.prevent="refresh">刷新</button>
         <div class="btn-group">
           <button class="btn btn-default">
             {{currentLogger}}
@@ -49,7 +50,8 @@
         <td>{{item.timestamp}}</td>
         <td>{{item.level}}</td>
         <td :title="item.message">{{item.message | cutMessage}}</td>
-        <td v-json="item.meta"></td>
+        <td v-json="item.meta" :title="JSON.stringify(item.meta)"></td>
+
       </tr>
       </tbody>
     </table>

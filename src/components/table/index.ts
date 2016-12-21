@@ -27,15 +27,18 @@ Vue.directive('json', function (el, binding, vnode) {
 });
 
 @VueComponent(require('./index.vue'), {
+  props:[
+    'order'
+  ],
   asyncComputed: {
     current() {
       let option = {};
       option['name'] = this.currentLogger;
       option['start'] = this.currentPage * this.pageSize;
       option['limit'] = this.pageSize;
-      option['order'] = 'asc';
-
-
+      option['order'] = this.order || 'desc';
+      option['from'] = 1;
+      this.refreshMe = this.refreshMe;
       return (<any>this).$http.get('query?' + encodeQueryData(option)).then((response) => {
         let res = JSON.parse(response.body);
         let data: any[] = [];
@@ -70,23 +73,6 @@ Vue.directive('json', function (el, binding, vnode) {
   }
 })
 export class Viewer extends Vue {
-  all = [
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-    ['a', 'b', 'c', 'd', 'e', 'f'],
-  ];
   pageSize: number = 10;
   totalPage: number = 100;
 
@@ -94,6 +80,11 @@ export class Viewer extends Vue {
   loggers: string[] = [];
   currentLogger: string = 'Select logger';
   private http;
+  /**
+   * fixme: used to trigger current change, refresh page
+   * @type {number}
+   */
+  refreshMe:number = 0;
 
   mounted() {
     this.http = (<any>this).$http;
@@ -121,6 +112,9 @@ export class Viewer extends Vue {
     this.currentPage = nextPage;
   }
 
+  refresh(){
+    this.refreshMe++;
+  }
   created() {
   }
 }
