@@ -16,10 +16,11 @@ npm install winston-viewer-static
 > Serve
 ``` javascript
 var winston_viewer_static = require('winston-viewer-static');
-
-// winston_viewer_static.static will contain the absolute path to the frontend files directory. It can be served
- as static files by koa-static or express.static
 ```
+
+winston_viewer_static.static will contain the absolute path to the frontend files directory. It can be served
+ as static files by koa-static or express.static
+ 
 ## Build Setup
 
 If you want to build this project by your self, you can
