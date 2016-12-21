@@ -1,5 +1,5 @@
 {
-  "name": "winston-viewer",
+  "name": "winston-viewer-static",
   "version": "1.0.3",
   "description": "A winston logger viewer built on vue.js",
   "author": "xiezongjun <xiezjsc@gmail.com>",
