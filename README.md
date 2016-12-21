@@ -39,3 +39,5 @@ npm run build
 This is a Typescript enabled vue project with webpack. Template and style are loaded by vue-loader, 
 typescript files are loaded by ts-loader. If you are not familiar with typescript, you can remove ts file, and write 
 pure javascript in <script> tag inside .vue files.
+
+Typescript are split into individual files, so that it can get better support by IDE like WebStorm. Code completion works perfect.
