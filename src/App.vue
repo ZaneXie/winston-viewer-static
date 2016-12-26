@@ -12,13 +12,12 @@
         <!-- Tab panes -->
         <div class="tab-content">
           <div role="tabpanel" class="tab-pane active" id="home">
-            <viewer order="desc"></viewer>
+            <viewer order="desc" :hasPagination="false"></viewer>
           </div>
           <div role="tabpanel" class="tab-pane" id="profile">
-            <viewer order="asc"></viewer>
+            <viewer order="asc" :autoRefresh="false"></viewer>
             <div>
         </div>
-
       </div>
 
     </div>

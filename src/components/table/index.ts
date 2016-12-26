@@ -27,16 +27,31 @@ Vue.directive('json', function (el, binding, vnode) {
 });
 
 @VueComponent(require('./index.vue'), {
-  props:[
-    'order'
-  ],
+  props: {
+    'order': {
+      type: String,
+      default: 'asc',
+    },
+    'autoRefresh': {
+      type: Boolean,
+      default: true
+    },
+
+    'hasPagination': {
+      type: Boolean,
+      default: true
+    }
+  },
   asyncComputed: {
-    current() {
+    current()
+    {
       let option = {};
       option['name'] = this.currentLogger;
-      option['start'] = this.currentPage * this.pageSize;
-      option['limit'] = this.pageSize;
       option['order'] = this.order || 'desc';
+      if (this.hasPagination) {
+        option['start'] = this.currentPage * this.pageSize;
+        option['limit'] = this.pageSize;
+      }
       option['from'] = 1;
       this.refreshMe = this.refreshMe;
       return (<any>this).$http.get('query?' + encodeQueryData(option)).then((response) => {
@@ -47,10 +62,10 @@ Vue.directive('json', function (el, binding, vnode) {
           let transed: any[] = [];
           for (let k of origin) {
             let trans = {
-              name:name,
+              name: name,
               timestamp: k.timestamp,
               message: k.message,
-              level:k.level
+              level: k.level
             };
             delete k['timestamp']
             delete k['message']
@@ -65,9 +80,11 @@ Vue.directive('json', function (el, binding, vnode) {
         return data;
       });
     }
-  },
+  }
+  ,
   filters: {
-    cutMessage(message){
+    cutMessage(message)
+    {
       return message.slice(0, 50);
     }
   }
@@ -76,21 +93,37 @@ export class Viewer extends Vue {
   pageSize: number = 10;
   totalPage: number = 100;
 
+  // autoRefresh: boolean = true;
+  /**
+   * 单位：秒
+   * @type {number}
+   */
+  refreshInterval:number = 10;
   currentPage: number = 0;
   loggers: string[] = [];
-  currentLogger: string = 'Select logger';
+  currentLogger: string = '选择日志';
   private http;
+  showAdvance:boolean = false;
   /**
    * fixme: used to trigger current change, refresh page
    * @type {number}
    */
-  refreshMe:number = 0;
+  refreshMe: number = 0;
 
   mounted() {
     this.http = (<any>this).$http;
     this.http.get('loggers').then((response) => {
       this.loggers = JSON.parse(response.body);
-    })
+    });
+
+
+    let ar = ()=>{
+      if((<any>this).autoRefresh){
+        this.refresh();
+      }
+      setTimeout(ar, this.refreshInterval * 1000);
+    };
+    setTimeout(ar, this.refreshInterval * 1000);
   }
 
   changeLogger(logger) {
@@ -112,9 +145,10 @@ export class Viewer extends Vue {
     this.currentPage = nextPage;
   }
 
-  refresh(){
+  refresh() {
     this.refreshMe++;
   }
+
   created() {
   }
 }
