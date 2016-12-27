@@ -63,7 +63,7 @@ Vue.directive('json', function (el, binding, vnode) {
           for (let k of origin) {
             let trans = {
               name: name,
-              timestamp: k.timestamp,
+              timestamp: new Date(k.timestamp).toLocaleString(),
               message: k.message,
               level: k.level
             };
@@ -76,6 +76,12 @@ Vue.directive('json', function (el, binding, vnode) {
           }
 
           data = data.concat(transed);
+        }
+        if (data.length != 0 && this.currentPage === this.totalPage - 1) {
+          this.totalPage++;
+        }
+        if (data.length === 0) {
+          this.totalPage = this.currentPage + 1;
         }
         return data;
       });
@@ -91,19 +97,18 @@ Vue.directive('json', function (el, binding, vnode) {
 })
 export class Viewer extends Vue {
   pageSize: number = 10;
-  totalPage: number = 100;
-
+  totalPage: number = 10;
   // autoRefresh: boolean = true;
   /**
    * 单位：秒
    * @type {number}
    */
-  refreshInterval:number = 10;
+  refreshInterval: number = 10;
   currentPage: number = 0;
   loggers: string[] = [];
   currentLogger: string = '选择日志';
   private http;
-  showAdvance:boolean = false;
+  showAdvance: boolean = false;
   /**
    * fixme: used to trigger current change, refresh page
    * @type {number}
@@ -117,8 +122,8 @@ export class Viewer extends Vue {
     });
 
 
-    let ar = ()=>{
-      if((<any>this).autoRefresh){
+    let ar = () => {
+      if ((<any>this).autoRefresh) {
         this.refresh();
       }
       setTimeout(ar, this.refreshInterval * 1000);
